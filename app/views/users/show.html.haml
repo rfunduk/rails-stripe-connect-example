@@ -1,0 +1,87 @@
+.col-md-6.col-md-offset-3.col-xs-12
+  = render partial: 'nav'
+
+  - if flash[:notice]
+    .alert.alert-info
+      %p= flash[:notice].html_safe
+  - if flash[:error]
+    .alert.alert-danger
+      %p= flash[:error].html_safe
+
+  %h1= @user.name
+  %h4= @user.email
+
+  - if @user.connected?
+    .panel.panel-primary
+      .panel-body
+        = form_tag pay_user_path( @user ) do
+          .indicator
+          = hidden_field_tag :token
+          %button.pull-right.btn.btn-primary.btn-lg.pay-button Pay $10
+
+          %h3 Make a one-off charge
+          %p
+            Pay
+            = is_myself? ? 'yourself' : 'this user'
+            a one-time charge of $10
+            %br
+            in
+            = is_myself? ? 'your' : 'their'
+            default currency (#{@user.currency.upcase}).
+
+    .panel.panel-primary
+      .panel-body
+        = form_tag subscribe_user_path( @user ) do
+          .indicator
+          = hidden_field_tag :token
+          = hidden_field_tag :plan
+          %button.pull-right.btn.btn-primary.btn-lg.subscribe-button{ disabled: true } Subscribe
+
+          %h3 Subscribe to a plan
+          %p
+            - if @plans.any?
+              The application defines the following plans:
+            - else
+              The application has no plans.
+              %a{ href: 'https://dashboard.stripe.com/test/plans', rel: 'app-owner', target: '_blank' } Add Plans &raquo;
+          - if @plans.any?
+            .list-group
+              - @plans.each do |plan|
+                %a.list-group-item.plan-choice{ data: { id: plan.id, name: plan.name, amount: plan.amount } }
+                  = plan.name
+                  \-
+                  %strong
+                    = number_to_currency( plan.amount / 100 )
+                    = @user.currency.upcase
+
+  - else
+    - if is_myself?
+      .panel.panel-primary
+        .panel-body
+          - if current_user.connected?
+            %a.pull-right.btn.btn-danger.btn-lg{ href: deauthorize_users_path } Deauthorize
+            %h3 Disconnect
+            %p
+              Since this is you, you can
+              %br
+              disconnect from this application.
+          - else
+            %a.pull-right.btn.btn-lg.btn-primary{ href: connect_users_path } Connect
+            %h3 Connect
+            %p
+              Connect your Stripe account to enable payment features.
+
+    - else
+      .panel.panel-default.not-connected
+        .panel-body
+          %h3 Not Connected
+          %p
+            This user is not connected to Stripe, so
+            you can't pay them.
+
+
+  = javascript_include_tag 'https://checkout.stripe.com/checkout.js'
+  :javascript
+    window.stripePublishableKey = #{@user.publishable_key.to_json};
+    window.currentUserEmail = #{current_user.email.to_json};
+    window.payPath = #{pay_user_path( @user ).to_json};

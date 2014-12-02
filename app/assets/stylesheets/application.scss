@@ -1,0 +1,200 @@
+/*
+ * These styles are not very interesting.
+ * I could have easily gotten away with straight
+ * Bootstrap with no customization at all...
+ *
+ * ...but I just can't do it :)
+ */
+
+$brand-primary: #00c38b;
+$brand-danger: #d9625a;
+$brand-info: #86ded1;
+$brand-warning: #f0c24a;
+$brand-success: #75b84c;
+
+$input-border-focus: #c3c3c3;
+
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+h1 {
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+h4 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #666;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.btn:focus { outline: none !important; }
+.btn-danger, .btn-primary, .btn-success { background: white; &:hover { background: white; } }
+.btn[disabled] { background: white; border-color: #DDD; color: #AAA; }
+.btn-danger { color: $brand-danger; &:hover { color: darken( $brand-danger, 15% ); } }
+.btn-primary { color: $brand-primary; &:hover { color: darken( $brand-primary, 15% ); } }
+.btn-success { color: $brand-success; &:hover { color: darken( $brand-success, 15% ); } }
+
+.alert {
+  background: white !important;
+}
+
+form {
+  h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  ul {
+    padding-left: 16px;
+  }
+  a {
+    cursor: pointer;
+  }
+  &.form-horizontal label.control-label {
+    text-align: left;
+    font-size: 12px;
+    font-weight: normal;
+    padding-top: 10px;
+  }
+  button.main-button {
+    display: block;
+    margin: 0 auto;
+    padding: 8px 40px;
+  }
+  .indicator {
+    display: none;
+    width: 100%;
+    background: white image-url('processing.gif') no-repeat center center;
+  }
+  &.processing {
+    * { display: none; }
+    .indicator { display: block !important; }
+  }
+}
+
+.form-control:focus {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+              0 0 3px rgba(195, 195, 195, 0.6);
+}
+
+.panel {
+  h3 {
+    margin-top: 0;
+  }
+  a.pull-right {
+    margin-left: 16px;
+  }
+}
+.list-group {
+  margin-bottom: 0;
+}
+.list-group-item {
+  border-color: #EEE;
+}
+
+.login-link {
+  font-size: 12px;
+  padding-top: 4px;
+}
+
+.navbar {
+  border-radius: 3px;
+  margin-top: 8px;
+  cursor: default;
+  .navbar-header > .navbar-text {
+    margin-left: 0;
+  }
+  .navbar-collapse { &.in, &.collapsing {
+    padding-bottom: 16px;
+    text-align: center;
+  } }
+  span.sep {
+    color: #444;
+  }
+  a, a.navbar-link {
+    color: $brand-primary + #333;
+    &:hover, &:active, &:focus {
+      color: white;
+      text-decoration: none;
+    }
+  }
+}
+
+.list-group {
+  span.nowrap {
+    white-space: nowrap;
+  }
+  .list-group-item.active a {
+    color: #F8F8F8;
+    &:hover { color: #FFF; }
+  }
+}
+
+.user-item {
+  strong { font-size: larger; }
+  .nudge-small-text { margin-top: 2px; }
+}
+
+.panel.home .panel-body {
+  text-align: center;
+  padding: 10%;
+  h1 {
+    font-size: 35px;
+    margin-bottom: 25px;
+  }
+  .buttons {
+    margin-top: 10px;
+    a.start {
+      padding-left: 75px;
+      padding-right: 75px;
+    }
+  }
+}
+.panel.not-connected {
+  background: #FCFCFC;
+  .panel-body {
+    padding: 20px;
+    text-align: center;
+  }
+}
+
+// footer handling
+html, body {
+  height: 100%;
+}
+
+.container {
+  // footer push
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin-bottom: -75px;
+}
+
+footer {
+  height: 75px;
+  width: 100%;
+
+  .inner {
+    color: #888;
+    font-size: 12px;
+    // height: 16px;
+    line-height: 16px;
+    text-align: center;
+    a.stripe-logo {
+      img { margin: 8px auto 6px auto; }
+    }
+    a {
+      color: $text-color;
+      font-weight: bold;
+    }
+  }
+}

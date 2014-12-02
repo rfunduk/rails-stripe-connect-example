@@ -1,0 +1,27 @@
+%br
+.col-md-4.col-md-offset-4.col-xs-12
+  .panel.panel-primary
+    .panel-body
+      = form_for @user, as: 'new_user', html: { class: 'form-horizontal' } do |f|
+        %h2 New User
+        - if @user.errors.any?
+          .alert.alert-danger
+            %strong Found some problems :(
+            %ul
+              - @user.errors.full_messages.each do |msg|
+                %li= msg
+
+        .form-group
+          = f.label :name, class: 'col-xs-3 control-label'
+          .col-xs-9
+            = f.text_field :name, class: 'form-control', placeholder: 'Your Name'
+        .form-group
+          = f.label :email, class: 'col-xs-3 control-label'
+          .col-xs-9
+            = f.email_field :email, class: 'form-control', placeholder: 'your@email.com'
+        .form-group
+          = f.label :password, class: 'col-xs-3 control-label'
+          .col-xs-9
+            = f.password_field :password, class: 'form-control', placeholder: ('&bull;' * 16).html_safe
+
+        %button.btn.btn-primary.main-button{ type: 'submit' } Signup

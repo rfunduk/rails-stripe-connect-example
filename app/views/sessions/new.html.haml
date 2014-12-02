@@ -1,0 +1,16 @@
+%br
+.col-md-4.col-md-offset-4.col-xs-12
+  .panel.panel-primary
+    .panel-body
+      = form_tag sessions_path, method: 'POST' do
+        %h2 Login
+        - if flash[:error]
+          .alert.alert-danger= flash[:error]
+
+        .form-group
+          = email_field_tag :email, '', placeholder: 'me@example.com', class: 'form-control'
+
+        .form-group
+          = password_field_tag :password, '', placeholder: 'password', class: 'form-control'
+
+        %button.btn.btn-primary.main-button{ type: 'submit' } Login

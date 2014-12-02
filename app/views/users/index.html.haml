@@ -1,0 +1,16 @@
+.col-md-6.col-md-offset-3.col-xs-12
+  = render partial: 'nav'
+
+  %h1 Users
+
+  %br
+
+  .list-group
+    - @users.each do |user|
+      .list-group-item.user-item{ class: ('active' if user == current_user), href: user_path( user ) }
+        .pull-right.nudge-small-text
+          %small
+            %a{ target: '_blank', rel: 'app-owner', href: "https://dashboard.stripe.com/test/applications/users/#{user.stripe_user_id}" }= user.stripe_user_id
+        %a{ href: user_path( user ) }
+          %strong= user.name
+          %span.nowrap (#{user.email})

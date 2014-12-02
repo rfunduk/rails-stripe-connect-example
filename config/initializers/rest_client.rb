@@ -1,0 +1,1 @@
+RestClient.log = Rails.logger

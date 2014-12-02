@@ -1,0 +1,26 @@
+!!!
+%html
+  %head
+    %title Rails Stripe Connect Example
+    %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1.0' }
+
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+    = csrf_meta_tags
+  %body
+    .container
+      = yield
+
+    %footer
+      .inner
+        .col-md-6.col-md-offset-3.col-xs-12
+          .info
+            This
+            %a{ target: '_blank', href: Rails.configuration.github_url } open-source
+            example application was made with
+            %span.glyphicon.glyphicon-headphones
+            by
+            = succeed '.' do
+              %a{ href: 'http://ryanfunduk.com', target: '_blank' } Ryan Funduk
+          %a.stripe-logo{ target: '_blank', href: 'https://stripe.com' }
+            = image_tag 'powered-by-stripe.png', width: 238 / 2, height: 52 / 2, alt: ''

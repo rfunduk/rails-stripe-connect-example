@@ -1,0 +1,30 @@
+- fresh = !User.any?
+
+%br
+.col-md-8.col-md-offset-2.col-xs-12
+  - if flash[:notice]
+    .alert.alert-info.auto
+      %p= flash[:notice]
+
+  .panel.panel-primary.home
+    .panel-body
+      %h1 Rails + Stripe Connect Example
+
+      %p
+        This application demonstrates the basics of implementing a
+        %br
+        %a{ href: 'https://stripe.com/docs/connect' } Stripe Connect
+        application in Rails.
+
+      .alert.alert-warning
+        Please be sure you've read the
+        %a{ href: "#{Rails.configuration.github_url}/blob/master/README.markdown" } README
+        and run the
+        = succeed '.' do
+          %a{ href: "#{Rails.configuration.github_url}/blob/master/lib/tasks/setup.rake" } setup script
+
+      .buttons
+        - unless fresh
+          %a.btn.btn-primary.btn-lg{ href: new_sessions_path } Login
+        %a.btn.btn-primary.btn-lg{ class: ('start' if fresh), href: new_user_path }
+          = fresh ? 'Get Started &raquo;'.html_safe : 'New User'

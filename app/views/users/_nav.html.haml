@@ -1,0 +1,22 @@
+%nav.navbar.navbar-inverse
+  .container-fluid
+    .navbar-header
+      %button.navbar-toggle.collapsed{ type: 'button', data: { toggle: 'collapse', target: '#navbar-links' } }
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+
+      %p.navbar-text
+        %span.glyphicon.glyphicon-chevron-right
+        %span.hidden-xs Logged in as
+        %a{ href: user_path( current_user ) }
+          %strong= current_user.name
+
+    .collapse.navbar-collapse{ id: 'navbar-links' }
+      %p.navbar-text.navbar-right
+        - if request.path == users_path
+          All Users
+        - else
+          %a.navbar-link{ href: users_path } All Users
+        %span.sep &nbsp;|&nbsp;
+        %a.navbar-link{ href: destroy_sessions_path } Logout
