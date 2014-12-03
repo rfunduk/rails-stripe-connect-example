@@ -44,6 +44,7 @@ $(document).ready ->
     currentPlan =
       id: planButton.data('id')
       name: planButton.data('name')
+      currency: planButton.data('currency')
       amount: parseInt planButton.data('amount'), 10
 
     form.find('input[name=plan]').val( currentPlan.id )

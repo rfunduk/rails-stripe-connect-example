@@ -47,12 +47,12 @@
           - if @plans.any?
             .list-group
               - @plans.each do |plan|
-                %a.list-group-item.plan-choice{ data: { id: plan.id, name: plan.name, amount: plan.amount } }
+                %a.list-group-item.plan-choice{ data: plan.to_hash }
                   = plan.name
                   \-
                   %strong
                     = number_to_currency( plan.amount / 100 )
-                    = @user.currency.upcase
+                    = plan.currency.upcase
 
   - else
     - if is_myself?
