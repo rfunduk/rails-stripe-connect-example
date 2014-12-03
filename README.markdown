@@ -43,7 +43,13 @@ to be confident nothing nefarious is being done with your API keys :)
     bin/rake app:setup
 
 Once you get through that, your keys will be in `config/secrets.yml` and
-picked up by Rails when you start it:
+picked up by Rails when you start it.
+
+Now load the schema into the database:
+
+    bin/rake db:schema:load
+
+And start up the server:
 
     bin/rails s
 
