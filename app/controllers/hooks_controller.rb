@@ -11,39 +11,55 @@ class HooksController < ApplicationController
     user = params[:user_id] && User.find_by( stripe_user_id: params[:user_id] )
 
     # If we didn't find a user, we'll have nil instead
-    # so build our arguments to the Event API taking that into account
-    args = [ params[:id], user.try(:secret_key) ].compact
-
-    # We now have one of:
+    # so build our arguments to the Event API taking that into account.
+    # We'll end up with one of:
     #   args = [ 'EVENT_ID' ]
     #   args = [ 'EVENT_ID', 'ACCESS_TOKEN' ]
-    event = Stripe::Event.retrieve( *args ) rescue nil
+    args = [ params[:id], user.try(:secret_key) ].compact
 
-    # A list of events we want to handle, can save us
-    # some work.
-    kinds = %w{ account.application.deauthorized }
+    # Retrieve the event from Stripe so that we can be
+    # sure it wasn't spoofed/faked by someone being mean.
+    begin
+      event = Stripe::Event.retrieve( *args )
+    rescue Stripe::AuthenticationError
+      # If we get an authentication error, and the event belongs to
+      # a user, that means the account deauthorized
+      # our application. We can't look up and verify the event
+      # because the event belongs to the connected account, and we're
+      # no longer authorized to access their account!
+      if user && user.connected?
+        connector = StripeConnect.new( user )
+        connector.deauthorized
+      end
+    end
 
-    # This is a special case due to 'account.application.deauthorized'
-    # events not being accessible anymore (the user deauthorized us, afterall).
-    if event.nil? && params[:type] == 'account.application.deauthorized'
-      StripeConnect.new( user ).deauthorized
+    # Here we're actually done, but if you wanted to handle
+    # other events (charges or invoice payment failures, etc)
+    # then this is how you would do it.
+    case event.try(:type)
 
-    elsif event.type.in?( kinds )
-      case event.type
-
+    when 'account.application.deauthorized'
       # This is what the account.application.deauthorized
       # handler will hopefully look like some day, where
       # the event is still accessible somehow and we verified
       # it came from Stripe.
-      when 'account.application.deauthorized'
-        # find the user who just deauthorized the app
-        user = User.find_by( stripe_user_id: event.user_id )
-        if user && user.connected?
-          connector = StripeConnect.new( user )
-          connector.deauthorized
-        end
-
+      if user && user.connected?
+        connector = StripeConnect.new( user )
+        connector.deauthorized
       end
+
+    # These others simply log the event because there's
+    # not much to do with them for this example app.
+    # You might do more useful things like sending receipt emails, etc.
+    # Of course you can handle as many event types as you need:
+    #   https://stripe.com/docs/api#event_types
+    when 'charge.succeeded'
+      Rails.logger.info "**** STRIPE EVENT **** #{event.type} **** #{event.id}"
+    when 'invoice.payment_succeeded'
+      Rails.logger.info "**** STRIPE EVENT **** #{event.type} **** #{event.id}"
+    when 'invoice.payment_failed'
+      Rails.logger.info "**** STRIPE EVENT **** #{event.type} **** #{event.id}"
+
     end
 
     # We just need to respond in the affirmative.
