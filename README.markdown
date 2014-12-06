@@ -8,9 +8,9 @@ running with your own application.
 
 ## Pre-requisites
 
-This application is based on **Rails 4.1** and running on **Ruby 2.1**. It
-will probably work fine with versions after these, and I will endeavour to keep
-it up to date.
+This application is based on **Rails 4.1** and running on **Ruby 2.1** (with
+[`bundler`](http://bundler.io/)). It will probably work fine with versions after
+these, and I will endeavour to keep it up to date.
 
 You need a Stripe account configured with a Connect application.
 That can be setup in your
