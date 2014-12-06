@@ -101,7 +101,9 @@ at the top of the page:
 The one downside to this is that it might not be fully clear who's
 getting paid what and from whom. So feel free to make another
 Stripe account with a test email address (eg, with Gmail you can
-do things like `you+stripetest1@gmail.com` to make this easier).
+do things like `you+stripetest1@gmail.com` to make this easier),
+or you can just use the 'Create New Account...' option in the
+menu at the top right of your Stripe dashboard.
 
 This account + Stripe connection becomes the 'seller'.
 
