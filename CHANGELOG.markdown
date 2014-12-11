@@ -1,3 +1,8 @@
+## December 11, 2014 ##
+
+* Shortest `client_id` is now 17 chars (`ca_**************`)
+
+
 ## December 6, 2014 ##
 
 * Changed the webhook handling code quite a bit to make it

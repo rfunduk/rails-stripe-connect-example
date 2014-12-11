@@ -39,7 +39,7 @@ settings in a bunch of files.
     end
 
     client_id ||= ask "What is your application's development client ID? " do |q|
-      q.validate = /ca_[a-zA-Z0-9]{32,252}/
+      q.validate = /ca_[a-zA-Z0-9]{14,252}/
       q.echo = "*"
     end
 
