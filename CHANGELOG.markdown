@@ -3,6 +3,7 @@
 * Update code to latest API version (`2015-02-18`), specify in
   initializer to use this version, and note the version in README.
 * Improve/tweak the setup script.
+* Upgrade to Rails 4.2.
 
 
 ## December 11, 2014 ##

@@ -10,7 +10,7 @@ running with your own application.
 
 This application currently uses the following Stripe API version: [**2015-02-18**](https://stripe.com/docs/upgrades#2015-02-18)
 
-This application is based on **Rails 4.1** and running on **Ruby 2.1** (with
+This application is based on **Rails 4.2** and running on **Ruby 2.1** (with
 [`bundler`](http://bundler.io/)). It will probably work fine with versions after
 these, and I will endeavour to keep it up to date.
 
