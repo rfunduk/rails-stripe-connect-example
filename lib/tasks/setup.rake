@@ -6,12 +6,6 @@ require 'securerandom'
 namespace :app do
   desc "Setup this Rails+Stripe Connect Test Application"
   task :setup do
-    # If you like you can specify these 3 values via
-    # environment variables instead of being prompted for them.
-    client_id = ENV['STRIPE_CLIENT_ID']
-    publishable_key = ENV['STRIPE_PUBLISHABLE_KEY']
-    secret_key = ENV['STRIPE_SECRET_KEY']
-
     say <<-EOF
 
                 Thanks for trying out the
@@ -36,6 +30,45 @@ settings in a bunch of files.
       exit 1
     else
       puts
+    end
+
+    existing_config = Rails.root.join('config/secrets.yml')
+    if File.exists?( existing_config )
+      # if you have an existing config/secrets.yml
+      # we can test it for you
+      load_config = ask "You have an existing config/secrets.yml, shall I test it? (Y/N) " do |q|
+        q.case = :up
+        q.in = %w{ Y N }
+      end
+
+      if load_config == 'Y'
+        config = YAML.load_file( existing_config )['development']
+        client_id = config['stripe_client_id']
+        publishable_key = config['stripe_publishable_key']
+        secret_key = config['stripe_secret_key']
+        puts "Loaded config/secrets.yml\n\n"
+      else
+        puts
+      end
+    else
+      # or if you like you can specify these 3 values via
+      # environment variables instead of being prompted for them.
+      use_env = ask "Do you want to try to load configuration from the environment? (Y/N) " do |q|
+        q.case = :up
+        q.in = %w{ Y N }
+      end
+
+      if use_env == 'Y'
+        client_id = ENV['STRIPE_CLIENT_ID']
+        publishable_key = ENV['STRIPE_PUBLISHABLE_KEY']
+        secret_key = ENV['STRIPE_SECRET_KEY']
+        loaded = [ ('client_id' if client_id),
+                   ('publishable_key' if publishable_key),
+                   ('secret_key' if secret_key) ].compact
+        puts "Loaded: #{'None' if loaded.empty?}#{loaded.join(', ')}\n\n"
+      else
+        puts
+      end
     end
 
     client_id ||= ask "What is your application's development client ID? " do |q|

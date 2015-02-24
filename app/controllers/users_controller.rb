@@ -97,7 +97,7 @@ class UsersController < ApplicationController
         {
           amount: amount,
           currency: user.currency,
-          card: params[:token],
+          source: params[:token],
           description: "Test Charge via Stripe Connect",
           application_fee: fee
         },
@@ -135,7 +135,7 @@ class UsersController < ApplicationController
       # fire-and-forgetting it.
       customer = Stripe::Customer.create(
         {
-          card: params[:token],
+          source: params[:token],
           email: current_user.email,
           plan: params[:plan],
           application_fee_percent: fee_percent

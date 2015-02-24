@@ -1,3 +1,10 @@
+## February 24, 2015 ##
+
+* Update code to latest API version (`2015-02-18`), specify in
+  initializer to use this version, and note the version in README.
+* Improve/tweak the setup script.
+
+
 ## December 11, 2014 ##
 
 * Shortest `client_id` is now 17 chars (`ca_**************`)
