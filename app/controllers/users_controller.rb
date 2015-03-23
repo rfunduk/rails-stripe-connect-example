@@ -28,57 +28,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def update
+    manager = current_user.manager
+    manager.update_account! params: params
+    redirect_to user_path( current_user )
+  end
+
   # Show a user's profile page.
   # This is where you can spend money with the connected account.
   # app/views/users/show.html.haml
   def show
     @user = User.find( params[:id] )
     @plans = Stripe::Plan.all
-  end
-
-  # Connect yourself to a Stripe account.
-  # Only works on the currently logged in user.
-  # See app/services/stripe_connect.rb for #connect_url details.
-  def connect
-    connector = StripeConnect.new( current_user )
-    connect_url, error = connector.connect_url( redirect_uri: confirm_users_url )
-
-    if connect_url.nil?
-      flash[:error] = error
-      redirect_to user_path( current_user )
-    else
-      redirect_to connect_url
-    end
-  end
-
-  # Confirm a connection to a Stripe account.
-  # Only works on the currently logged in user.
-  # See app/services/stripe_connect.rb for #verify! details.
-  def confirm
-    connector = StripeConnect.new( current_user )
-    if params[:code]
-      # If we got a 'code' parameter. Then the
-      # connection was completed by the user.
-      connector.verify!( params[:code] )
-
-    elsif params[:error]
-      # If we have an 'error' parameter, it's because the
-      # user denied the connection request. Other errors
-      # are handled at #connect_url generation time.
-      flash[:error] = "Authorization request denied."
-    end
-
-    redirect_to user_path( current_user )
-  end
-
-  # Deauthorize the application from accessing
-  # the connected Stripe account.
-  # Only works on the currently logged in user.
-  def deauthorize
-    connector = StripeConnect.new( current_user )
-    connector.deauthorize!
-    flash[:notice] = "Account disconnected from Stripe."
-    redirect_to user_path( current_user )
   end
 
   # Make a one-off payment to the user.
@@ -93,20 +54,28 @@ class UsersController < ApplicationController
     fee = (amount * Rails.application.secrets.fee_percentage).to_i
 
     begin
-      charge = Stripe::Charge.create(
-        {
-          amount: amount,
-          currency: user.currency,
-          source: params[:token],
-          description: "Test Charge via Stripe Connect",
-          application_fee: fee
-        },
+      charge_attrs = {
+        amount: amount,
+        currency: user.currency,
+        source: params[:token],
+        description: "Test Charge via Stripe Connect",
+        application_fee: fee
+      }
 
+      case params[:charge_on]
+      when 'connected'
         # Use the user-to-be-paid's access token
-        # to make the charge.
-        user.secret_key
-      )
-      flash[:notice] = "Charged successfully! <a target='_blank' rel='connected-account' href='https://dashboard.stripe.com/test/payments/#{charge.id}'>View in dashboard &raquo;</a>"
+        # to make the charge directly on their account
+        charge = Stripe::Charge.create( charge_attrs, user.secret_key )
+      when 'platform'
+        # Use the platform's access token, and specify the
+        # connected account's user id as the destination so that
+        # the charge is transferred to their account.
+        charge_attrs[:destination] = user.stripe_user_id
+        charge = Stripe::Charge.create( charge_attrs )
+      end
+
+      flash[:notice] = "Charged successfully! <a target='_blank' rel='#{params[:charge_on]}-account' href='https://dashboard.stripe.com/test/payments/#{charge.id}'>View in dashboard &raquo;</a>"
 
     rescue Stripe::CardError => e
       error = e.json_body[:error][:message]
@@ -142,7 +111,7 @@ class UsersController < ApplicationController
         },
         user.secret_key
       )
-      flash[:notice] = "Subscribed! <a target='_blank' rel='app-owner' href='https://dashboard.stripe.com/test/customers/#{customer.id}'>View in dashboard &raquo;</a>"
+      flash[:notice] = "Subscribed! <a target='_blank' rel='platform-account' href='https://dashboard.stripe.com/test/customers/#{customer.id}'>View in dashboard &raquo;</a>"
 
     rescue Stripe::CardError => e
       error = e.json_body[:error][:message]

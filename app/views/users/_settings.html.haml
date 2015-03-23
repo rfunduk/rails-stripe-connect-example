@@ -1,0 +1,156 @@
+.panel.panel-primary
+  .panel-body
+    - if current_user.oauth?
+      %a.pull-right.btn.btn-danger.btn-lg{ href: stripe_deauthorize_path } Deauthorize
+      %h3 Disconnect
+      %p
+        Since this is you, you can
+        %br
+        disconnect from this application.
+
+    - if current_user.managed?
+      %h2 Stripe Account Management
+      %p
+        Account Type:
+        %strong Managed
+
+      - # the current account status, whether the
+      - # account can make charges or can receive transfers
+      %p
+        .account-status
+          Status:
+          - charges = [ 'Charges', @user.stripe_account_status['charges_enabled'] ]
+          - transfers = [ 'Transfers', @user.stripe_account_status['transfers_enabled'] ]
+          %table
+            - [ charges, transfers ].each do |text, yn|
+              %tr
+                %td
+                  %span.label{ class: yn ? 'label-primary' : 'label-danger' }
+                    %span.glyphicon{ class: yn ? 'glyphicon-ok' : 'glyphicon-remove' }
+                    = text
+
+      - # if we need more information from this user to keep
+      - # their account in good standing
+      - if @user.stripe_account_status['fields_needed'].any?
+        %hr
+        .needed
+          = form_for @user, html: { class: 'form-horizontal' } do |f|
+            %h3 Needed Information
+            - if @user.stripe_account_status['due_by']
+              %p
+                Due by:
+                %strong= Time.at( @user.stripe_account_status['due_by'] ).strftime("%Y-%m-%d")
+
+            - if params[:debug]
+              = debug @user.stripe_account_status['fields_needed']
+
+            - manager = StripeManaged.new( current_user )
+            %ul.list-group
+
+              - # this account needs a bank account
+              - if manager.needs? 'bank_account'
+                %li.list-group-item#bank-account{ data: { publishable: @user.publishable_key } }
+                  %script{ src: 'https://js.stripe.com/v2/' }
+                  %h3 Bank Account
+                  = hidden_field_tag :bank_account_token
+                  .form-group
+                    - countries = manager.supported_bank_account_countries
+                    %label.control-label.col-xs-12.col-sm-3 Country:
+                    .col-xs-12.col-sm-9
+                      %select.form-control{ data: { stripe: 'country' } }
+                        - countries.each do |country|
+                          %option{ value: country[:code] }= country[:name]
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Account Number:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', data: { stripe: 'account_number' } }
+                  .form-group#bank-routing-container
+                    %label.control-label.col-xs-12.col-sm-3 Routing Number:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', data: { stripe: 'routing_number' } }
+
+              - # this account needs legal entity info
+              - if manager.needs? 'legal_entity.'
+                %li.list-group-item
+                  %h3 Legal Entity
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 First Name:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[first_name]', value: manager.legal_entity.first_name }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Last Name:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[last_name]', value: manager.legal_entity.last_name }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Date of Birth:
+                    .col-xs-12.col-sm-9
+                      - dob = manager.legal_entity.dob
+                      - selected = Date.new( dob.year, dob.month, dob.day ) rescue nil
+                      = date_select 'legal_entity', 'dob',
+                          { selected: selected,
+                            prompt: true,
+                            start_year: 90.years.ago.year,
+                            end_year: 13.years.ago.year },
+                          { class: 'form-control' }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Address Line 1:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[address][line1]', value: manager.legal_entity.address.line1 }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Address Line 2:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[address][line2]', value: manager.legal_entity.address.line2 }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 City:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[address][city]', value: manager.legal_entity.address.city }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 State/Province:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[address][state]', value: manager.legal_entity.address.state }
+
+                  .form-group
+                    %label.control-label.col-xs-12.col-sm-3 ZIP/Postal Code:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: "legal_entity[address][postal_code]", value: manager.legal_entity.address.postal_code }
+
+
+            %br
+            .buttons
+              = f.submit 'Save Info', class: 'btn btn-lg btn-primary'
+
+    - if current_user.standalone?
+      %h3 Stripe Account Management
+      %p
+        Account Type:
+        %strong Standalone
+
+      - # the current account status, whether the
+      - # account can make charges or can receive transfers
+      %p
+        .account-status
+          Status:
+          - charges = [ 'Charges', @user.stripe_account_status['charges_enabled'] ]
+          - transfers = [ 'Transfers', @user.stripe_account_status['transfers_enabled'] ]
+          %table
+            - [ charges, transfers ].each do |text, yn|
+              %tr
+                %td
+                  %span.label{ class: yn ? 'label-primary' : 'label-danger' }
+                    %span.glyphicon{ class: yn ? 'glyphicon-ok' : 'glyphicon-remove' }
+                    = text
+      - unless @user.stripe_account_status['details_submitted']
+        %hr
+        %ul.list-group
+          %li.list-group-item
+            %a.btn.btn-primary.btn-lg.pull-right{ href: 'https://dashboard.stripe.com/account/details' }
+              %span.glyphicon.glyphicon-arrow-right
+            %h3 Claim or activate your account.
+            %p
+              You will also receive a link from Stripe via email.

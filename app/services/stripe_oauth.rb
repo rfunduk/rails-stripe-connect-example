@@ -1,6 +1,6 @@
-class StripeConnect < Struct.new( :user )
+class StripeOauth < Struct.new( :user )
 
-  def connect_url( params )
+  def oauth_url( params )
     url = client.authorize_url( {
       scope: 'read_write',
       stripe_landing: 'login',
@@ -35,7 +35,7 @@ class StripeConnect < Struct.new( :user )
           EOF
 
         # Something else horrible happened? Network is down,
-        # Stripe API is broken? ¯\_(ツ)_/¯
+        # Stripe API is broken?...
         else
           return [ nil, params[:error_description] ]
 
@@ -63,6 +63,7 @@ class StripeConnect < Struct.new( :user )
     } )
 
     user.stripe_user_id = data.params['stripe_user_id']
+    user.stripe_account_type = 'oauth'
     user.publishable_key = data.params['stripe_publishable_key']
     user.secret_key = data.token
     user.currency = default_currency
@@ -102,12 +103,12 @@ class StripeConnect < Struct.new( :user )
   # Get the default currency of the connected user.
   # All transactions will use this currency.
   def default_currency
-    Stripe::Account.retrieve( user.secret_key ).default_currency
+    Stripe::Account.retrieve( user.stripe_user_id, user.secret_key ).default_currency
   end
 
   # A simple OAuth2 client we can use to generate a URL
   # to redirect the user to as well as get an access token.
-  # Used in #connect_url and #verify!
+  # Used in #oauth_url and #verify!
   def client
     @client ||= OAuth2::Client.new(
       Rails.application.secrets.stripe_client_id,

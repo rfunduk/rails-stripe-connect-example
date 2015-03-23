@@ -5,12 +5,12 @@
 
   %br
 
-  .list-group
+  .list-group.users
     - @users.each do |user|
-      .list-group-item.user-item{ class: ('active' if user == current_user), href: user_path( user ) }
+      .list-group-item{ class: ('active' if user == current_user), href: user_path( user ) }
         .pull-right.nudge-small-text
           %small
-            %a{ target: '_blank', rel: 'app-owner', href: "https://dashboard.stripe.com/test/applications/users/#{user.stripe_user_id}" }= user.stripe_user_id
+            %a{ target: '_blank', rel: 'platform-account', href: "https://dashboard.stripe.com/test/applications/users/#{user.stripe_user_id}" }= user.stripe_user_id
         %a{ href: user_path( user ) }
           %strong= user.name
           %span.nowrap (#{user.email})

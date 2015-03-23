@@ -1,0 +1,38 @@
+.panel.panel-primary
+  .panel-body
+    %h3 Connect
+    %p There are 3 ways to create/connect your Stripe account.
+
+    %ul.list-group
+      %li.list-group-item#stripe-oauth
+        %a.pull-right.btn.btn-lg.btn-primary{ href: stripe_oauth_path } Connect
+        %h3 OAuth
+        %p Connect or create a Stripe account via OAuth.
+
+      %li.list-group-item#stripe-standalone
+        = form_tag stripe_standalone_path, method: 'POST' do
+          %input.pull-right.btn.btn-lg.btn-primary{ type: 'submit', value: 'Create' }
+          %h3 Standalone
+          %p
+            %small Create a standalone Stripe account in
+            %select.country{ name: 'country' }
+              - StripeStandalone::COUNTRIES.each do |country|
+                %option{ value: country[:code] }= country[:name]
+
+      - # managed accounts are in public beta
+      - # see services/stripe_managed.rb#ALLOWED
+      - if Stripe::Account.retrieve('self').country.in? StripeManaged::ALLOWED
+        %li.list-group-item#stripe-managed
+          = form_tag stripe_managed_path, method: 'POST' do
+            %input.pull-right.btn.btn-lg.disabled.btn-primary{ type: 'submit', value: 'Create' }
+            %h3 Managed
+            %p
+              %small Create a managed Stripe account in
+              %select.country{ name: 'country' }
+                - StripeManaged::COUNTRIES.each do |country|
+                  %option{ value: country[:code] }= country[:name]
+              %br
+              %label.tos
+                %input{ type: 'checkbox', name: 'tos', checked: false }
+                I accept the
+                %a{ href: 'https://stripe.com/us/terms', target: '_blank' } Stripe Terms of Service

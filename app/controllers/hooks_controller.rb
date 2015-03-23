@@ -21,6 +21,11 @@ class HooksController < ApplicationController
     # sure it wasn't spoofed/faked by someone being mean.
     begin
       event = Stripe::Event.retrieve( *args )
+    rescue Stripe::InvalidRequestError
+      # The event doesn't exist for some reason... this might
+      # happen if you've got other apps maybe?
+      render nothing: true, status: 200
+      return
     rescue Stripe::AuthenticationError
       # If we get an authentication error, and the event belongs to
       # a user, that means the account deauthorized
@@ -31,6 +36,9 @@ class HooksController < ApplicationController
         connector = StripeConnect.new( user )
         connector.deauthorized
       end
+
+      render nothing: true, status: 200
+      return
     end
 
     # Here we're actually done, but if you wanted to handle
@@ -44,8 +52,18 @@ class HooksController < ApplicationController
       # the event is still accessible somehow and we verified
       # it came from Stripe.
       if user && user.connected?
-        connector = StripeConnect.new( user )
-        connector.deauthorized
+        user.manager.deauthorized
+      end
+
+    when 'account.updated'
+      # This webhook is used for standalone and managed
+      # accounts. It will notify you about new information
+      # required for the account to remain in good standing.
+      if user && user.connected?
+        # we don't actually need to pass the event here
+        # we'll request the account details directly inside
+        # the manager
+        user.manager.update_account!
       end
 
     # These others simply log the event because there's

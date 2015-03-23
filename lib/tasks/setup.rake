@@ -117,7 +117,7 @@ settings in a bunch of files.
 
     # check secret
     print "Checking secret... "
-    account = Stripe::Account.retrieve( secret_key ) rescue nil
+    account = Stripe::Account.retrieve( 'self', secret_key ) rescue nil
 
     if account.nil?
       puts "That secret key did not appear to work. Please see the README"

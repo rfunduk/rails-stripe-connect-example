@@ -9,22 +9,29 @@ $(document).ready ->
 
   payButton = $('.pay-button')
   form = payButton.closest('form')
+  destination = form.find('select[name=charge_on]')
   indicator = form.find('.indicator').height( form.outerHeight() )
+  handler = null
 
-  handler = StripeCheckout.configure
-    # The publishable key of the **connected account**.
-    key: window.stripePublishableKey
+  createHandler = ->
+    handler = StripeCheckout.configure
+      # Grab the correct publishable key. Depending on
+      # the selection in the interface.
+      key: window.publishable[destination.val()]
 
-    # The email of the logged in user.
-    email: window.currentUserEmail
+      # The email of the logged in user.
+      email: window.currentUserEmail
 
-    allowRememberMe: false
-    closed: ->
-      form.removeClass('processing') unless submitting
-    token: ( token ) ->
-      submitting = true
-      form.find('input[name=token]').val( token.id )
-      form.get(0).submit()
+      allowRememberMe: false
+      closed: ->
+        form.removeClass('processing') unless submitting
+      token: ( token ) ->
+        submitting = true
+        form.find('input[name=token]').val( token.id )
+        form.get(0).submit()
+
+  destination.change createHandler
+  createHandler()
 
   payButton.click ( e ) ->
     e.preventDefault()

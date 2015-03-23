@@ -37,7 +37,9 @@ p:last-child {
 
 .btn:focus { outline: none !important; }
 .btn-danger, .btn-primary, .btn-success { background: white; &:hover { background: white; } }
-.btn[disabled] { background: white; border-color: #DDD; color: #AAA; }
+.btn[disabled], .btn.disabled,
+.btn[disabled]:active, .btn.disabled:active,
+.btn[disabled]:focus, .btn.disabled:focus { background: white; border-color: #DDD; color: #AAA; }
 .btn-danger { color: $brand-danger; &:hover { color: darken( $brand-danger, 15% ); } }
 .btn-primary { color: $brand-primary; &:hover { color: darken( $brand-primary, 15% ); } }
 .btn-success { color: $brand-success; &:hover { color: darken( $brand-success, 15% ); } }
@@ -57,6 +59,9 @@ form {
   }
   a {
     cursor: pointer;
+  }
+  select {
+    vertical-align: middle;
   }
   &.form-horizontal label.control-label {
     text-align: left;
@@ -86,7 +91,7 @@ form {
 }
 
 .panel {
-  h3 {
+  h2, h3 {
     margin-top: 0;
   }
   a.pull-right {
@@ -94,10 +99,28 @@ form {
   }
 }
 .list-group {
+  margin-bottom: 10px;
+}
+.list-group:last-child {
   margin-bottom: 0;
 }
 .list-group-item {
   border-color: #EEE;
+  h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .form-group:last-child { margin-bottom: 0; }
+}
+
+.tos {
+  font-weight: normal;
+  margin-bottom: 0;
+  margin-top: 3px;
+  input {
+    margin-top: 0;
+    margin-right: 3px;
+  }
 }
 
 .login-link {
@@ -138,9 +161,12 @@ form {
   }
 }
 
-.user-item {
-  strong { font-size: larger; }
-  .nudge-small-text { margin-top: 2px; }
+.list-group.users {
+  margin-bottom: 20px;
+  .list-group-item {
+    strong { font-size: larger; }
+    .nudge-small-text { margin-top: 2px; }
+  }
 }
 
 .panel.home .panel-body {
@@ -159,11 +185,32 @@ form {
   }
 }
 .panel.not-connected {
-  background: #FCFCFC;
   .panel-body {
     padding: 20px;
     text-align: center;
   }
+}
+
+.needed {
+  .buttons { text-align: center; }
+  select {
+    display: inline;
+    width: auto;
+  }
+}
+
+.account-status table {
+  display: inline-block;
+  vertical-align: top;
+
+  .label {
+    background: transparent;
+    font-weight: normal;
+    font-size: 14px;
+    // padding: 5px 10px;
+  }
+  .label-primary { color: $brand-primary; }
+  .label-danger { color: $brand-danger; }
 }
 
 // footer handling
