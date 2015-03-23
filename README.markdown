@@ -88,26 +88,53 @@ session system.
 
 ### Step 2
 
-Connect to Stripe. When you click the 'Connect' button you'll be
-taken through the OAuth flow. The simplest thing to do is to
-connect the **same account that owns the application**.
+Connect to Stripe. You'll have the option of 3 different types
+of connection:
 
-You're probably already logged into it, so either click Connect
-(if you're already activated) or look for the development mode bar
+##### 1. OAuth Standalone
+
+Create an account or connect to an existing account via an OAuth flow.
+
+You may want to do this in an incognito window or similar so that you don't
+accidentally connect your platform/main account to itself which will be
+very confusing.
+
+It's probably best to make another Stripe account with a test email
+address (eg, with Gmail you can do things like `you+stripetest1@gmail.com`
+to make this easier), or you can just use the 'Create New Account...'
+option in the menu at the top right of your Stripe dashboard.
+
+When you click 'Connect', look for the development mode bar
 at the top of the page:
 
 ![Development Mode Prompt](./docs/development-mode-bar.png)
 
 ...and click _Skip this account form..._ if you aren't activated yet.
 
-The one downside to this is that it might not be fully clear who's
-getting paid what and from whom. So feel free to make another
-Stripe account with a test email address (eg, with Gmail you can
-do things like `you+stripetest1@gmail.com` to make this easier),
-or you can just use the 'Create New Account...' option in the
-menu at the top right of your Stripe dashboard.
+This account + Stripe connection becomes the 'seller'.
+
+##### 2. Standalone Account via API
+
+You can create a standalone Stripe account via the API, which doesn't require
+the user to leave your site at all.
+
+Doing this is a simple matter of choosing a country and clicking 'Create'
 
 This account + Stripe connection becomes the 'seller'.
+
+##### 3. Managed Account via API
+
+You can create an entirely managed-by-you Stripe account via the API.
+With this method the user will have the least interaction with Stripe.
+
+Doing this is a simple matter of choosing a country, agreeing to the Stripe
+Terms of Service, and clicking 'Create'.
+
+Currently managed accounts are in beta and only available to US or Canadian
+platform accounts.
+
+This account + Stripe connection becomes the 'seller'.
+
 
 ### Step 3
 
@@ -128,3 +155,6 @@ subscribe to a plan.
 Go through the code! I've tried to heavily comment the relevant and most
 important parts of the code. Let me know if anything is unclear or
 broken by opening an issue or [sending me an email](http://ryanfunduk.com).
+
+I suggest perusing [the Connect docs](https://stripe.com/docs/connect) before
+trying to dig into the code.
