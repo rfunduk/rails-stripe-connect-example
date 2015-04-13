@@ -17,10 +17,10 @@ class StripeManaged < Struct.new( :user )
         managed: true,
         country: country,
         email: user.email,
-        decline_charge_on: {
-          cvc_failure: true,
-          avs_failure: true
-        },
+        # decline_charge_on: {
+        #   cvc_failure: true,
+        #   avs_failure: true
+        # },
         tos_acceptance: {
           ip: ip,
           date: Time.now.to_i
