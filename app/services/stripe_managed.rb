@@ -40,7 +40,7 @@ class StripeManaged < Struct.new( :user )
         stripe_user_id: @account.id,
         secret_key: @account.keys.secret,
         publishable_key: @account.keys.publishable,
-        stripe_account_status: managed_status
+        stripe_account_status: account_status
       )
     end
 
