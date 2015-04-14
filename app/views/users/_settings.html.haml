@@ -96,6 +96,11 @@
                           { class: 'form-control' }
 
                   .form-group
+                    %label.control-label.col-xs-12.col-sm-3 Last Four Digits of SSN:
+                    .col-xs-12.col-sm-9
+                      %input.form-control{ type: 'text', name: 'legal_entity[ssn_last_4]' }
+
+                  .form-group
                     %label.control-label.col-xs-12.col-sm-3 Address Line 1:
                     .col-xs-12.col-sm-9
                       %input.form-control{ type: 'text', name: 'legal_entity[address][line1]', value: manager.legal_entity.address.line1 }
