@@ -79,6 +79,11 @@ class StripeManaged < Struct.new( :user )
           end
         end
 
+        # add other required fields
+        new_legal_entity["personal_address"] = new_legal_entity["address"]
+        new_legal_entity[:verification] = {} # would be an empty string, must be a hash
+        new_legal_entity[:type] = "individual"
+
         account.legal_entity = new_legal_entity
         account.save
       end
