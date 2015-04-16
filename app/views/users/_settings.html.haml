@@ -95,10 +95,16 @@
                             end_year: 13.years.ago.year },
                           { class: 'form-control' }
 
-                  .form-group
-                    %label.control-label.col-xs-12.col-sm-3 Last Four Digits of SSN:
-                    .col-xs-12.col-sm-9
-                      %input.form-control{ type: 'text', name: 'legal_entity[ssn_last_4]' }
+                  - if manager.needs? 'legal_entity.personal_id_number'
+                    .form-group
+                      %label.control-label.col-xs-12.col-sm-3 Personal ID Number:
+                      .col-xs-12.col-sm-9
+                        %input.form-control{ type: 'text', name: 'legal_entity[personal_id_number]' }
+                  - elsif manager.needs? 'legal_entity.ssn_last_4'
+                    .form-group
+                      %label.control-label.col-xs-12.col-sm-3 SSN Last 4:
+                      .col-xs-12.col-sm-9
+                        %input.form-control{ type: 'text', name: 'legal_entity[ssn_last_4]' }
 
                   .form-group
                     %label.control-label.col-xs-12.col-sm-3 Address Line 1:

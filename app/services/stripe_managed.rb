@@ -17,10 +17,6 @@ class StripeManaged < Struct.new( :user )
         managed: true,
         country: country,
         email: user.email,
-        # decline_charge_on: {
-        #   cvc_failure: true,
-        #   avs_failure: true
-        # },
         tos_acceptance: {
           ip: ip,
           date: Time.now.to_i
@@ -79,10 +75,8 @@ class StripeManaged < Struct.new( :user )
           end
         end
 
-        # add other required fields
-        new_legal_entity["personal_address"] = new_legal_entity["address"]
-        new_legal_entity[:verification] = {} # would be an empty string, must be a hash
-        new_legal_entity[:type] = "individual"
+        # copy 'address' as 'personal_address'
+        new_legal_entity[:personal_address] = new_legal_entity['address']
 
         account.legal_entity = new_legal_entity
         account.save
