@@ -58,27 +58,26 @@ class StripeManaged < Struct.new( :user )
           day: params[:legal_entity].delete('dob(3i)')
         }
 
-        # build a new legal_entity hash from the params
-        new_legal_entity = {}
+        # update legal_entity hash from the params
         params[:legal_entity].entries.each do |key, value|
           if [ :address, :dob ].include? key.to_sym
             value.entries.each do |akey, avalue|
               next if avalue.blank?
               # Rails.logger.error "#{akey} - #{avalue.inspect}"
-              new_legal_entity[key] ||= {}
-              new_legal_entity[key][akey] = avalue
+              account.legal_entity[key] ||= {}
+              account.legal_entity[key][akey] = avalue
             end
           else
             next if value.blank?
             # Rails.logger.error "#{key} - #{value.inspect}"
-            new_legal_entity[key] = value
+            account.legal_entity[key] = value
           end
         end
 
         # copy 'address' as 'personal_address'
-        new_legal_entity[:personal_address] = new_legal_entity['address']
+        pa = account.legal_entity['address'].dup.to_h
+        account.legal_entity['personal_address'] = pa
 
-        account.legal_entity = new_legal_entity
         account.save
       end
     end

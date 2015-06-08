@@ -2,6 +2,11 @@
 
 * The country code parameter for UK accounts should be `GB` (not `UK`).
 * Upgrade to API version `2015-04-07`, no changes required.
+* Update bindings to 1.21.0
+* Fix 'verification must be a hash' and other issues with updating
+  managed accounts for verification by handling the `legal_entity`
+  update differently. Since 1.20.2 updating nested hashes works, so
+  we now do that instead of building a new `legal_entity` from scratch.
 
 
 ## February 24, 2015 ##
