@@ -4,7 +4,7 @@ class StripeManaged < Struct.new( :user )
     { name: 'United States', code: 'US' },
     { name: 'Canada', code: 'CA' },
     { name: 'Australia', code: 'AU' },
-    { name: 'United Kingdom', code: 'UK' },
+    { name: 'United Kingdom', code: 'GB' },
     { name: 'Ireland', code: 'IE' }
   ]
 

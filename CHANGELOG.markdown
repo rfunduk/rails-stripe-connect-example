@@ -1,3 +1,9 @@
+## June 8, 2015 ##
+
+* The country code parameter for UK accounts should be `GB` (not `UK`).
+* Upgrade to API version `2015-04-07`, no changes required.
+
+
 ## February 24, 2015 ##
 
 * Update code to latest API version (`2015-02-18`), specify in
