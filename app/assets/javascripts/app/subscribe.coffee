@@ -17,7 +17,7 @@ $(document).ready ->
 
   handler = StripeCheckout.configure
     # The publishable key of the **connected account**.
-    key: window.stripePublishableKey
+    key: window.publishable.connected
 
     # The email of the logged in user.
     email: window.currentUserEmail
