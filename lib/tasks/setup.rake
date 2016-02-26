@@ -109,7 +109,7 @@ settings in a bunch of files.
     end
 
 
-    # now get publishable key
+    # now get secret key
     secret_key ||= ask "\nWhat is your test secret key? " do |q|
       q.validate = /sk_test_[a-zA-Z0-9]{24,247}/
       q.echo = "*"
