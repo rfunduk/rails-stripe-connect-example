@@ -13,11 +13,12 @@ $(document).ready ->
   subscribeButton = $('.subscribe-button')
   planButtons = $('.plan-choice')
   form = subscribeButton.closest('form')
+  destination = form.find('select[name=charge_on]')
   indicator = form.find('.indicator').height( form.outerHeight() )
 
   handler = StripeCheckout.configure
     # The publishable key of the **connected account**.
-    key: window.stripePublishableKey
+    key: window.publishable[destination.val()]
 
     # The email of the logged in user.
     email: window.currentUserEmail
